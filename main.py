@@ -78,7 +78,7 @@ def show_menu():
 
     if output_file is not None:
         print(
-            f"3) Update output method - ℹ️ currently selected: {'Standard output' if output_file is None else output_file} ✅"
+            f"3) Update output method - ℹ️ currently selected: {'Standard output' if output_file == '' else output_file} ✅"
         )
         if output_exists:
             print("    (⚠️ warning: this file will be overwritten!)")
@@ -140,10 +140,16 @@ def update_garble_status():
     global plaintext
     global garble_method
     global output_file
+    global output_exists
     global garble_ready
 
     if plaintext is not None and garble_method is not None and output_file is not None:
         garble_ready = True
+
+        if os.path.isfile(output_file):
+            output_exists = True
+        else:
+            output_exists = False
     else:
         garble_ready = False
 
@@ -190,7 +196,7 @@ while True:
                 print(f"{i+1}) {GARBLE_METHODS.keys()[i]}")
             # Additional options (help and exit)
             print(f"{len(GARBLE_METHODS)+1}) What are these? Get help")
-            print(f"{len(GARBLE_METHODS)+2}) Exit")
+            print(f"{len(GARBLE_METHODS)+2}) Return to main menu")
             print("")
 
             method_chosen = input(PROMPT)
@@ -220,7 +226,70 @@ or return to the main menu by entering {len(GARBLE_METHODS)+2}.
                     print("Success!")
                     break
     elif cmd == "3":
-        output_file = "test_file.txt"
+        while True:
+            print(f"Choose an output method by typing its number.")
+            print("")
+
+            print("1) Standard output")
+            print("2) File output")
+            print("3) Get help")
+            print("4) Return to main menu")
+            print("")
+
+            method_chosen = input(PROMPT)
+            print("")
+
+            if not method_chosen.isdigit():
+                print(
+                    f"""
+Option not recognized - please select an output option by entering a number
+between 1 and 2, get help by entering 3, or return to the main menu by entering
+4.
+                """
+                )
+            else:
+                method_index = int(method_chosen)
+                if method_index == 1:
+                    output_file = ""
+                    print("Success!")
+                    break
+                elif method_index == 2:
+                    while True:
+                        file_path = input("Enter a path to the file: ")
+                        print("")
+
+                        if os.path.isfile(file_path):
+                            print("File found!")
+                            print("")
+                            print(
+                                f"{color.BOLD}Warning: This file will be overwritten. Are you sure you want to select it?{color.RESET}"
+                            )
+                            print("")
+                            print("1) Yes, that's fine.")
+                            print("2) Nope, choose a different one!")
+                            print("")
+
+                            file_ok = input(PROMPT)
+                            print("")
+
+                            if file_ok == "1":
+                                output_file = file_path
+                                print("Success!")
+                                break
+
+                        else:
+                            output_file = file_path
+                            print("Success!")
+                            break
+                    break
+                elif method_index == 3:
+                    show_help()
+                elif method_index == 4:
+                    break
+                else:
+                    print(
+                        f"Option not recognized - please enter an option number between 1 and 4."
+                    )
         update_garble_status()
     elif cmd == "4":
         if garble_ready:
@@ -241,17 +310,15 @@ or return to the main menu by entering {len(GARBLE_METHODS)+2}.
                 )
                 print(repr(e), sys.stderr)
                 continue
-            if output_file is not None:
+            if output_file != "":
                 with open(output_file, "w") as f:
                     for token in result:
                         f.write(token)
                         f.write(" ")
-                # clear_garble_status()
             else:
                 for token in result:
                     print(token, sep=" ")
                 print("")
-            # clear_garble_status()
             print("Success!")
         else:
             print(
