@@ -186,6 +186,9 @@ while True:
             plaintext += line
             plaintext += "\n"
 
+        print("")
+        print("Success!")
+
     elif cmd == "2":
         while True:
             print(f"Choose a garbling method by typing its number.")
