@@ -8,6 +8,8 @@ import sys
 import nltk
 from indexed import IndexedOrderedDict
 
+from utils import print_wrapped
+
 
 # Inspired by https://stackoverflow.com/a/17303428
 # ANSI color codes reference here:
@@ -43,15 +45,13 @@ garble_ready = False
 
 
 def show_welcome():
-    welcome_text = f"""
-Welcome to {color.BOLD}garbler{color.RESET}!
-
-To garble text, choose input text, a garbling method, and an output method, then
-select “Generate garble” to garble the text. Show this help screen at any time
-using the “Get help” option.
-
-    """
-    print(welcome_text)
+    welcome_text = (
+        f"Welcome to {color.BOLD}garbler{color.RESET}! To garble text, "
+        "choose input text, a garbling method, and an output method, "
+        "then select “Generate garble” to garble the text. "
+        "Show this help screen at any time using the “Get help” option."
+    )
+    print_wrapped(welcome_text)
 
 
 def show_menu():
@@ -60,40 +60,43 @@ def show_menu():
     global output_file
     # Some of these symbols may not show up in VSCode depending on the font you're using.
 
-    print("")
-    print("**Main menu**")
-    print("")
-    print("Choose an option by typing its number.")
-    print("")
+    print_wrapped("")
+    print_wrapped("**Main menu**")
+    print_wrapped("")
+    print_wrapped("Choose an option by typing its number.")
+    print_wrapped("")
 
     if plaintext is not None:
-        print(f"1) Replace input text - ℹ️ currently set: Standard input ✅")
+        print_wrapped(f"1) Replace input text - ℹ️ currently set: Standard input ✅")
     else:
-        print(f"1) Add input text to be garbled")
+        print_wrapped(f"1) Add input text to be garbled")
 
     if garble_method is not None:
-        print(f"2) Update garbling method - ℹ️ currently selected: {garble_method+1} ✅")
+        print_wrapped(
+            f"2) Update garbling method - ℹ️ currently selected: {garble_method+1} ✅"
+        )
     else:
-        print(f"2) Choose garbling method")
+        print_wrapped(f"2) Choose garbling method")
 
     if output_file is not None:
-        print(
-            f"3) Update output method - ℹ️ currently selected: {'Standard output' if output_file == '' else output_file} ✅"
+        print_wrapped(
+            f"3) Update output method - ℹ️ currently selected: "
+            f"{'Standard output' if output_file == '' else output_file} ✅"
         )
         if output_exists:
-            print("    (⚠️ warning: this file will be overwritten!)")
+            print_wrapped("    (⚠️ warning: this file will be overwritten!)")
     else:
-        print("3) Add output method for garbled text")
+        print_wrapped("3) Add output method for garbled text")
 
     if garble_ready:
-        print("4) Generate garble ✅")
+        print_wrapped("4) Generate garble ✅")
     else:
-        print("4) Generate garble ❌")
+        print_wrapped("4) Generate garble ❌")
 
-    print("5) Get help")
-    print("6) Exit")
+    print_wrapped("5) Get help")
+    print_wrapped("6) Exit")
 
-    print("")
+    print_wrapped("")
 
 
 def show_help():
@@ -166,15 +169,17 @@ def clear_garble_status():
     garble_ready = False
 
 
+show_welcome()
 while True:
     show_menu()
     cmd = input(PROMPT)
-    print("")
+    print_wrapped("")
 
     if cmd == "1":
         plaintext = ""
-        print(
-            f"Enter the text to be garbled below. End your input with {color.BOLD}ctrl+d{color.RESET}."
+        print_wrapped(
+            "Enter the text to be garbled below. "
+            f"End your input with {color.BOLD}ctrl+d{color.RESET}."
         )
         # Get multiline input until we get EOF - inspired by
         # https://stackoverflow.com/a/38223253
@@ -186,38 +191,41 @@ while True:
             plaintext += line
             plaintext += "\n"
 
-        print("")
-        print("Success!")
+        print_wrapped("")
+        print_wrapped("Success!")
 
     elif cmd == "2":
         while True:
-            print(f"Choose a garbling method by typing its number.")
-            print("")
+            print_wrapped(f"Choose a garbling method by typing its number.")
+            print_wrapped("")
 
             # Print methods
             for i in range(len(GARBLE_METHODS)):
-                print(f"{i+1}) {GARBLE_METHODS.keys()[i]}")
+                print_wrapped(f"{i+1}) {GARBLE_METHODS.keys()[i]}")
             # Additional options (help and exit)
-            print(f"{len(GARBLE_METHODS)+1}) What are these? Get help")
-            print(f"{len(GARBLE_METHODS)+2}) Return to main menu")
-            print("")
+            print_wrapped(f"{len(GARBLE_METHODS)+1}) What are these? Get help")
+            print_wrapped(f"{len(GARBLE_METHODS)+2}) Return to main menu")
+            print_wrapped("")
 
             method_chosen = input(PROMPT)
 
-            print("")
+            print_wrapped("")
             if not method_chosen.isdigit():
-                print(
-                    f"""
-Option not recognized - please select a garbling option by entering a number
-between 1 and {len(GARBLE_METHODS)}, get help by entering {len(GARBLE_METHODS)+1},
-or return to the main menu by entering {len(GARBLE_METHODS)+2}.
-                """
+                print_wrapped(
+                    "Option not recognized - please select a garbling option "
+                    "by entering a number between "
+                    f"1 and {len(GARBLE_METHODS)},"
+                    f" get help by entering {len(GARBLE_METHODS)+1},"
+                    f" or return to the main menu by entering"
+                    f" {len(GARBLE_METHODS)+2}."
                 )
             else:
                 method_index = int(method_chosen)
                 if method_index > len(GARBLE_METHODS) + 2 or method_index < 1:
-                    print(
-                        f"Option not recognized - please enter an option number between 1 and {len(GARBLE_METHODS)+2}."
+                    print_wrapped(
+                        "Option not recognized - please enter "
+                        "an option number between 1 and "
+                        f"{len(GARBLE_METHODS)+2}."
                     )
                 elif method_index == len(GARBLE_METHODS) + 1:
                     show_help()
@@ -226,63 +234,65 @@ or return to the main menu by entering {len(GARBLE_METHODS)+2}.
                 else:
                     garble_method = method_index - 1
                     update_garble_status()
-                    print("Success!")
+                    print_wrapped("Success!")
                     break
     elif cmd == "3":
         while True:
-            print(f"Choose an output method by typing its number.")
-            print("")
+            print_wrapped(f"Choose an output method by typing its number.")
+            print_wrapped("")
 
-            print("1) Standard output")
-            print("2) File output")
-            print("3) Get help")
-            print("4) Return to main menu")
-            print("")
+            print_wrapped("1) Standard output")
+            print_wrapped("2) File output")
+            print_wrapped("3) Get help")
+            print_wrapped("4) Return to main menu")
+            print_wrapped("")
 
             method_chosen = input(PROMPT)
-            print("")
+            print_wrapped("")
 
             if not method_chosen.isdigit():
-                print(
-                    f"""
-Option not recognized - please select an output option by entering a number
-between 1 and 2, get help by entering 3, or return to the main menu by entering
-4.
-                """
+                print_wrapped(
+                    "Option not recognized - please select an output option "
+                    "by entering a number between 1 and 2, "
+                    "get help by entering 3, or return to the main menu "
+                    "by entering 4."
                 )
             else:
                 method_index = int(method_chosen)
                 if method_index == 1:
                     output_file = ""
-                    print("Success!")
+                    print_wrapped("Success!")
                     break
                 elif method_index == 2:
                     while True:
                         file_path = input("Enter a path to the file: ")
-                        print("")
+                        print_wrapped("")
 
                         if os.path.isfile(file_path):
-                            print("File found!")
-                            print("")
-                            print(
-                                f"{color.BOLD}Warning: This file will be overwritten. Are you sure you want to select it?{color.RESET}"
+                            print_wrapped("File found!")
+                            print_wrapped("")
+                            print_wrapped(
+                                f"{color.BOLD}Warning: "
+                                "This file will be overwritten. "
+                                "Are you sure you want to select it?"
+                                "{color.RESET}"
                             )
-                            print("")
-                            print("1) Yes, that's fine.")
-                            print("2) Nope, choose a different one!")
-                            print("")
+                            print_wrapped("")
+                            print_wrapped("1) Yes, that's fine.")
+                            print_wrapped("2) Nope, choose a different one!")
+                            print_wrapped("")
 
                             file_ok = input(PROMPT)
-                            print("")
+                            print_wrapped("")
 
                             if file_ok == "1":
                                 output_file = file_path
-                                print("Success!")
+                                print_wrapped("Success!")
                                 break
 
                         else:
                             output_file = file_path
-                            print("Success!")
+                            print_wrapped("Success!")
                             break
                     break
                 elif method_index == 3:
@@ -290,16 +300,17 @@ between 1 and 2, get help by entering 3, or return to the main menu by entering
                 elif method_index == 4:
                     break
                 else:
-                    print(
-                        f"Option not recognized - please enter an option number between 1 and 4."
+                    print_wrapped(
+                        f"Option not recognized - please enter "
+                        "an option number between 1 and 4."
                     )
         update_garble_status()
     elif cmd == "4":
         if garble_ready:
             tokens = nltk.word_tokenize(plaintext, preserve_line=True)
             try:
-                # print(GARBLE_METHODS.values()[garble_method])
-                # print(json.dumps(tokens))
+                # print_wrapped(GARBLE_METHODS.values()[garble_method])
+                # print_wrapped(json.dumps(tokens))
                 result = subprocess.run(
                     ["python3", GARBLE_METHODS.values()[garble_method]],
                     input=json.dumps(tokens),
@@ -308,10 +319,11 @@ between 1 and 2, get help by entering 3, or return to the main menu by entering
                 )
                 result = json.loads(result.stdout)
             except Exception as e:
-                print(
-                    "Failed to garble! Settings have been preserved. This was the encountered error:"
+                print_wrapped(
+                    "Failed to garble! Settings have been preserved. "
+                    "This was the encountered error:"
                 )
-                print(repr(e), sys.stderr)
+                print_wrapped(repr(e), sys.stderr)
                 continue
             if output_file != "":
                 with open(output_file, "w") as f:
@@ -320,15 +332,14 @@ between 1 and 2, get help by entering 3, or return to the main menu by entering
                         f.write(" ")
             else:
                 for token in result:
-                    print(token, sep=" ")
-                print("")
-            print("Success!")
+                    print_wrapped(token, sep=" ")
+                print_wrapped("")
+            print_wrapped("Success!")
         else:
-            print(
-                """
-Can't choose this option yet! Check that you have added input text, chosen a
-garbling method, and added an output method!
-                """
+            print_wrapped(
+                "Can't choose this option yet! Check that you have "
+                "added input text, chosen a garbling method, and "
+                "added an output method!"
             )
 
     elif cmd == "5":
@@ -336,9 +347,7 @@ garbling method, and added an output method!
     elif cmd == "6":
         exit(0)
     else:
-        print(
-            """
-Command not recognized - please select a menu option by entering a number
-between 1 and 6.
-            """
+        print_wrapped(
+            "Command not recognized - please select a menu option by "
+            "entering a number between 1 and 6."
         )
