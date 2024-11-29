@@ -55,6 +55,8 @@ def show_welcome():
 
 
 def show_menu():
+    update_garble_status()
+
     global plaintext
     global garble_method
     global output_file
@@ -168,7 +170,7 @@ def clear_garble_status():
     output_file = None
     garble_ready = False
 
-
+clear_garble_status()
 show_welcome()
 while True:
     show_menu()
@@ -233,7 +235,6 @@ while True:
                     break
                 else:
                     garble_method = method_index - 1
-                    update_garble_status()
                     print_wrapped("Success!")
                     break
     elif cmd == "3":
@@ -304,7 +305,6 @@ while True:
                         f"Option not recognized - please enter "
                         "an option number between 1 and 4."
                     )
-        update_garble_status()
     elif cmd == "4":
         if garble_ready:
             tokens = nltk.word_tokenize(plaintext, preserve_line=True)
