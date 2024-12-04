@@ -1,11 +1,15 @@
 // import express from 'express'
 const express = require('express')
+const bodyParser = require('body-parser')
 
 const app = express()
 const port = 8001
 
 const datamuseRoot = 'https://www.datamuse.com/api/words'
 const datamuseAdj = 'rel_jjb'
+
+// Use bodyParser middleware to allow us to read request bodies as JSON
+app.use(bodyParser.json())
 
 app.post('/', async (req, res) => {
   console.log('body')
