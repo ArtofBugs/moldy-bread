@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 8001
 
-const datamuseRoot = 'https://www.datamuse.com/api/words'
+const datamuseRoot = 'https://api.datamuse.com/words'
 const datamuseAdj = 'rel_jjb'
 
 // Use bodyParser middleware to allow us to read request bodies as JSON
@@ -20,20 +20,20 @@ app.post('/', async (req, res) => {
   }
   let datamuseURL = new URL(datamuseRoot)
   let substitutions = []
-  req.body.forEach(async (word) => {
+  for (const word of req.body) {
     datamuseURL.searchParams.append(datamuseAdj, word)
     const datamuseFetch = await fetch(datamuseURL.href)
     let result = await datamuseFetch.json()
-    if (result.status != 200) {
-      res.status(result.status).send(substitutions)
+    if (datamuseFetch.status != 200) {
+      res.status(datamuseFetch.status).send(substitutions)
       return
     }
     if (result.length == 0) {
-      substitutions.append(word)
+      substitutions.push(word)
     } else {
-      substitutions.append(result[0].word)
+      substitutions.push(result[0].word)
     }
-  })
+  }
   console.log('substitutions')
   console.log(substitutions)
   res.status(200).send(substitutions)
