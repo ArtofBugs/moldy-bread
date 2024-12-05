@@ -329,7 +329,7 @@ while True:
                     "Failed to garble! Settings have been preserved. "
                     "This was the encountered error:"
                 )
-                print_wrapped(repr(e), sys.stderr)
+                print_wrapped(e)
                 continue
             if output_file != "":
                 with open(output_file, "w") as f:
