@@ -337,8 +337,7 @@ while True:
                         f.write(token)
                         f.write(" ")
             else:
-                for token in result:
-                    print_wrapped(token, sep=" ")
+                print(*result, sep=" ")
                 print_wrapped("")
             print_wrapped("Success!")
         else:
