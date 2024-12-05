@@ -1,9 +1,7 @@
 #! /usr/bin/env python3
 
-import json
 import os.path
-import subprocess
-import sys
+import requests
 
 import nltk
 from indexed import IndexedOrderedDict
@@ -26,8 +24,10 @@ class color:
 
 GARBLE_METHODS = IndexedOrderedDict(
     {
-        "Synonyms": "synonym_microservice.py",
-        "Adjectives": "adjective_microservice.py",
+        "Synonyms": 8000,
+        "Adjectives": 8001,
+        "Similar-sounding words": 8002,
+        "Words after": 8003,
     }
 )
 
@@ -128,6 +128,15 @@ Synonyms - replace as many words as possible in the input text with synonyms.
 
 Adjectives - replace as many words as possible in the input text with an
              adjective that is often used to describe it.
+
+Similar-sounding words - replace as many words as possible in the input text
+                         with another word that sounds similar.
+
+Words after - replace as many words as possible in the input text with another
+              word that commonly comes after it in a sentence.
+
+Substrings - replace as many words as possible in the input text with another
+             word that contains the original word as a substring.
 
 Output methods:
 Standard output - garbled text will be printed out into the shell.
@@ -309,15 +318,12 @@ while True:
         if garble_ready:
             tokens = nltk.word_tokenize(plaintext, preserve_line=True)
             try:
-                # print_wrapped(GARBLE_METHODS.values()[garble_method])
-                # print_wrapped(json.dumps(tokens))
-                result = subprocess.run(
-                    ["python3", GARBLE_METHODS.values()[garble_method]],
-                    input=json.dumps(tokens),
-                    encoding="ascii",
-                    stdout=subprocess.PIPE,
+                result = requests.post(
+                    url=f"http://localhost:{GARBLE_METHODS.values()[garble_method]}",
+                    json=tokens,
                 )
-                result = json.loads(result.stdout)
+                result = result.json()
+
             except Exception as e:
                 print_wrapped(
                     "Failed to garble! Settings have been preserved. "
