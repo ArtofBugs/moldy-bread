@@ -18,16 +18,17 @@ app.post('/', async (req, res) => {
     res.status(200).send({})
     return
   }
-  let datamuseURL = new URL(datamuseRoot)
   let substitutions = []
   for (const word of req.body) {
+    let datamuseURL = new URL(datamuseRoot)
     datamuseURL.searchParams.append(datamuseAdj, word)
     const datamuseFetch = await fetch(datamuseURL.href)
-    let result = await datamuseFetch.json()
+    const result = await datamuseFetch.json()
     if (datamuseFetch.status != 200) {
       res.status(datamuseFetch.status).send(substitutions)
       return
     }
+    console.log(result)
     if (result.length == 0) {
       substitutions.push(word)
     } else {
