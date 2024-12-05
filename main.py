@@ -1,10 +1,12 @@
 #! /usr/bin/env python3
 
+import json
 import os.path
-import requests
+import time
 
 import nltk
 from indexed import IndexedOrderedDict
+import requests
 
 from utils import print_wrapped
 
@@ -28,6 +30,7 @@ GARBLE_METHODS = IndexedOrderedDict(
         "Adjectives": 8001,
         "Similar-sounding words": 8002,
         "Words after": 8003,
+        "Substrings": None,
     }
 )
 
@@ -213,7 +216,7 @@ while True:
             # Print methods
             for i in range(len(GARBLE_METHODS)):
                 print_wrapped(f"{i+1}) {GARBLE_METHODS.keys()[i]}")
-            # Additional options (help and exit)
+            # Add additional options (help and exit)
             print_wrapped(f"{len(GARBLE_METHODS)+1}) What are these? Get help")
             print_wrapped(f"{len(GARBLE_METHODS)+2}) Return to main menu")
             print_wrapped("")
@@ -316,14 +319,28 @@ while True:
                     )
     elif cmd == "4":
         if garble_ready:
-            tokens = nltk.word_tokenize(plaintext, preserve_line=True)
             try:
-                result = requests.post(
-                    url=f"http://localhost:{GARBLE_METHODS.values()[garble_method]}",
-                    json=tokens,
-                )
-                result = result.json()
-
+                tokens = nltk.word_tokenize(plaintext, preserve_line=True)
+                result = []
+                if garble_method == len(GARBLE_METHODS) - 1:
+                    # Use Microservice A
+                    # (the substring-replacer-microservice submodule by FlintSable)
+                    INPUT_FILE = "substring-replacer-microservice/input.json"
+                    with open(INPUT_FILE, "w") as f:
+                        json.dump({"status": "pending", "words": tokens}, f, indent=2)
+                    while True:
+                        with open(INPUT_FILE, "r") as f:
+                            result = json.load(f)
+                        if result.get("status") == "completed":
+                            result = result["replacements"].values()
+                            break
+                        time.sleep(3)
+                else:
+                    result = requests.post(
+                        url=f"http://localhost:{GARBLE_METHODS.values()[garble_method]}",
+                        json=tokens,
+                    )
+                    result = result.json()
             except Exception as e:
                 print_wrapped(
                     "Failed to garble! Settings have been preserved. "
