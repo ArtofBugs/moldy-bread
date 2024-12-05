@@ -31,8 +31,12 @@ app.post('/', async (req, res) => {
     console.log(result)
     if (result.length == 0) {
       substitutions.push(word)
-    } else {
+    } else if (result.length == 1 || result[0].word != word) {
+      // Sometimes the original word will be returned as the first result -
+      // skip it in that case.
       substitutions.push(result[0].word)
+    } else {
+      substitutions.push(result[1].word)
     }
   }
   console.log('substitutions')
