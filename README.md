@@ -19,7 +19,8 @@ To use `garbler` for yourself, download and set it up using these steps:
     $ git submodule update
     ```
 
-1. Make a virtual environment and install the Python dependencies.
+1. Make a virtual environment and install the Python dependencies
+for the main program.
 
     ```sh
     $ python3 -m venv .venv
@@ -34,23 +35,20 @@ To use `garbler` for yourself, download and set it up using these steps:
     $ cd ..
     ```
 
+1. Start the microservices.
+
+    ```sh
+    $ cd microservices
+    $ python3 substring_replacer.py &
+    # Run for each microservice file
+    $ node NAME_microservice.js &
+    $ cd ..
+    ```
+
 1. Start the main program.
 
     ```sh
     $ ./main.py
-    ```
-
-1. Start the substring replacer microservice.
-
-    ```sh
-    $ python3 substring_replacer.py
-    ```
-
-1. Start the Node microservices.
-
-    ```sh
-    # Run for each microservice file
-    $ node <name>_microservice.js
     ```
 
 ## Usage
