@@ -39,10 +39,11 @@ for the main program.
 
     ```sh
     $ cd microservices
-    $ python3 substring_replacer.py &
     # Run for each microservice file
     $ node NAME_microservice.js &
-    $ cd ..
+    $ cd substring-replacer-microservice
+    $ python3 substring_replacer.py &> /dev/null &
+    $ cd ../..
     ```
 
 1. Start the main program.

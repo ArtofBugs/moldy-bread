@@ -325,7 +325,9 @@ while True:
                 if garble_method == len(GARBLE_METHODS) - 1:
                     # Use Microservice A
                     # (the substring-replacer-microservice submodule by FlintSable)
-                    INPUT_FILE = "substring-replacer-microservice/input.json"
+                    INPUT_FILE = (
+                        "microservices/substring-replacer-microservice/input.json"
+                    )
                     with open(INPUT_FILE, "w") as f:
                         json.dump({"status": "pending", "words": tokens}, f, indent=2)
                     while True:
