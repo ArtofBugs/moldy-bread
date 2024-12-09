@@ -41,7 +41,7 @@ for the main program.
     ```sh
     $ cd microservices
     # Run for each microservice file
-    $ node NAME_microservice.js &
+    $ node NAME_microservice.js &> /dev/null &
     $ cd substring-replacer-microservice
     $ python3 substring_replacer.py &> /dev/null &
     $ cd ../..
